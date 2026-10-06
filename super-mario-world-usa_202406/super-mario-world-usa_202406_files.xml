@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files>
+  <file name="Screenshot 2024-06-01 235151.png" source="original">
+    <mtime>1717278926</mtime>
+    <size>20677</size>
+    <md5>af9809df2dd7d0c430e34b3c086cac02</md5>
+    <crc32>ab982817</crc32>
+    <sha1>ca3d6c212ac60c060794ccddf9666d7772fb5d0e</sha1>
+    <format>Emulator Screenshot</format>
+  </file>
+  <file name="Screenshot 2024-06-01 235151_thumb.jpg" source="derivative">
+    <format>JPEG Thumb</format>
+    <original>Screenshot 2024-06-01 235151.png</original>
+    <mtime>1717279035</mtime>
+    <size>11408</size>
+    <md5>ab07ffbfa023535e7105080c5395618c</md5>
+    <crc32>54eecfd1</crc32>
+    <sha1>1c37c70406fd391af35cca0d840be15ee096d967</sha1>
+  </file>
+  <file name="Super Mario World (USA).sfc" source="original">
+    <mtime>1717278900</mtime>
+    <size>524288</size>
+    <md5>cdd3c8c37322978ca8669b34bc89c804</md5>
+    <crc32>b19ed489</crc32>
+    <sha1>6b47bb75d16514b6a476aa0c73a683a2a4c18765</sha1>
+    <format>Unknown</format>
+    <viruscheck>1717278953</viruscheck>
+  </file>
+  <file name="__ia_thumb.jpg" source="original">
+    <mtime>1717278943</mtime>
+    <size>22555</size>
+    <md5>c5eae12dc23a0444abb9ebb8c802e0e6</md5>
+    <crc32>14ad2bd6</crc32>
+    <sha1>17c1bf7846d617e43470c982c79d4c5f5152d701</sha1>
+    <format>Item Tile</format>
+  </file>
+  <file name="super-mario-world-usa_202406_archive.torrent" source="metadata">
+    <btih>bb4b8c26b48344555f4f0b89f49d5df2e78c147a</btih>
+    <mtime>1787699966</mtime>
+    <size>2370</size>
+    <md5>4d2278dc6eb135e8f234b20ae9aa889e</md5>
+    <crc32>d8f13159</crc32>
+    <sha1>c76092ab2345b336a8a2d403546738f36fb0cca9</sha1>
+    <format>Archive BitTorrent</format>
+  </file>
+  <file name="super-mario-world-usa_202406_files.xml" source="original">
+    <format>Metadata</format>
+    <md5>9c66cca2ad11df6402843b26636d5e20</md5>
+    <summation>md5</summation>
+  </file>
+  <file name="super-mario-world-usa_202406_meta.sqlite" source="original">
+    <mtime>1717278937</mtime>
+    <size>28672</size>
+    <md5>43b5e86648a211a1722c9239ae93373e</md5>
+    <crc32>2d73f0e9</crc32>
+    <sha1>13daa1555af4ac31057c2238b81a145aa1de6cd8</sha1>
+    <format>Metadata</format>
+  </file>
+  <file name="super-mario-world-usa_202406_meta.xml" source="original">
+    <mtime>1720145084</mtime>
+    <size>1874</size>
+    <md5>51976c47af29d57e9f7d55c229e28a34</md5>
+    <crc32>7d5bd7eb</crc32>
+    <sha1>7543b3b20b73f8f61d4a3a3f4fc2f6e338bee56f</sha1>
+    <format>Metadata</format>
+  </file>
+  <file name="super-mario-world-usa_202406_reviews.xml" source="original">
+    <mtime>1787699962</mtime>
+    <size>2614</size>
+    <md5>e69d8a0eafb7a39ba920d5c7b6007446</md5>
+    <crc32>753f17b7</crc32>
+    <sha1>17c1966d70f11c3954458f3e2c890c908a30bde1</sha1>
+    <format>Metadata</format>
+  </file>
+</files>

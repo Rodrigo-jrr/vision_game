@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<reviews itemIdentifier="super-mario-world-usa_202406">
+  <review>
+    <reviewtitle>SMW AWESOMENESS</reviewtitle>
+    <reviewbody>AWESOME GAME!</reviewbody>
+    <stars>5</stars>
+    <reviewer>Kieran Robbins</reviewer>
+    <reviewdate>2025-01-16 17:03:33</reviewdate>
+    <createdate>2025-01-16 17:03:33</createdate>
+    <reviewer_itemname>@kieran_robbins</reviewer_itemname>
+  </review>
+  <review>
+    <reviewtitle>the game</reviewtitle>
+    <reviewbody>this is a great game to pass the time frfr</reviewbody>
+    <stars>5</stars>
+    <reviewer>Gabriel Cruz874</reviewer>
+    <reviewdate>2025-05-14 18:08:17</reviewdate>
+    <createdate>2025-05-14 18:08:17</createdate>
+    <reviewer_itemname>@gabriel_cruz874</reviewer_itemname>
+  </review>
+  <review>
+    <reviewtitle>Super Mario World</reviewtitle>
+    <reviewbody>Best 2D Mario hands down.</reviewbody>
+    <stars>5</stars>
+    <reviewer>ASMarioFan13</reviewer>
+    <reviewdate>2025-12-14 16:33:02</reviewdate>
+    <createdate>2025-12-14 16:33:02</createdate>
+    <reviewer_itemname>@asmariofan13</reviewer_itemname>
+  </review>
+  <review>
+    <reviewtitle>How to save?</reviewtitle>
+    <reviewbody>I don't know how to save my progress, I click save and continue whenever it askes me and it still never saves.</reviewbody>
+    <stars>0</stars>
+    <reviewer>ROMAN JANUS</reviewer>
+    <reviewdate>2026-03-19 16:51:37</reviewdate>
+    <createdate>2026-03-19 16:51:37</createdate>
+    <reviewer_itemname>@roman_janus</reviewer_itemname>
+  </review>
+  <review>
+    <reviewtitle>Pretty Great Emulator for Super Mario World</reviewtitle>
+    <reviewbody>Plays Super Mario World really smoothly, may heat up your device though. No dead pixels or any glitch that doesn't exist on the original console. Only problem is it doesn't save; at all (because it's an Emulator, and Emulator's don't usually save). Other than that it's pretty good I recommend checking it out!</reviewbody>
+    <stars>5</stars>
+    <reviewer>DuhDinoKing2099</reviewer>
+    <reviewdate>2026-03-23 22:29:51</reviewdate>
+    <createdate>2026-03-23 22:29:51</createdate>
+    <reviewer_itemname>@duhdinoking2099</reviewer_itemname>
+  </review>
+  <review>
+    <reviewtitle>nice</reviewtitle>
+    <reviewbody>nice
+</reviewbody>
+    <stars>1</stars>
+    <reviewer>Rafael Pena Gomez</reviewer>
+    <reviewdate>2026-08-25 23:19:13</reviewdate>
+    <createdate>2026-08-25 23:01:06</createdate>
+    <reviewer_itemname>@rafael_pena_gomez</reviewer_itemname>
+  </review>
+  <info>
+    <num_reviews>6</num_reviews>
+    <avg_rating>4.20</avg_rating>
+  </info>
+</reviews>

@@ -18,16 +18,16 @@
 
 ### 👥 Alunos
 
-* [Integrante 1](https://www.linkedin.com/in/.../)
-* [Integrante 2](https://www.linkedin.com/in/.../)
-* [Integrante 3](https://www.linkedin.com/in/.../)
+* [Rodrigo Rezende](https://www.linkedin.com/in/.../)
+* [Kaiky Ferreira](https://www.linkedin.com/in/.../)
+* [Nicole Carol](https://www.linkedin.com/in/.../)
 * [Integrante 4](https://www.linkedin.com/in/.../)
 * [Integrante 5](https://www.linkedin.com/in/.../)
 
 ### 👔 Docentes e Orientação
 
 * **Orientador(a):** [FRANCISMAR ALVES MARTINS JUNIOR](https://www.linkedin.com/in/francismar-alves-martins-junior-8a320b90/)
-* **Coordenador(a):** [Nome do Coordenador(a)](#)
+* **Coordenador(a):** [Guilherme Nogeuira](#)
 
 ---
 

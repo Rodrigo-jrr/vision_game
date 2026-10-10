@@ -8,7 +8,7 @@
 
 ## 📌 Título do Projeto
 
-> Breve linha de destaque ou slogan técnico do projeto.
+> Vision Game — Controlador de jogo por visão computacional com gestos da mão.
 
 ![status](https://img.shields.io/badge/status-em%20andamento-yellow)
 
@@ -21,8 +21,6 @@
 * [Rodrigo Rezende](https://www.linkedin.com/in/.../)
 * [Kaiky Ferreira](https://www.linkedin.com/in/.../)
 * [Nicole Carol](https://www.linkedin.com/in/.../)
-* [Integrante 4](https://www.linkedin.com/in/.../)
-* [Integrante 5](https://www.linkedin.com/in/.../)
 
 ### 👔 Docentes e Orientação
 
@@ -35,42 +33,51 @@
 
 ### 📝 Resumo
 
-> Texto conciso (150–250 palavras) apresentando o contexto, motivação, método utilizado e conclusões.
+> Este projeto tem como objetivo desenvolver um controlador de jogo baseado em visão computacional, utilizando a webcam para detectar gestos da mão e convertê-los em comandos de teclado. A solução foi concebida como uma alternativa acessível ao controle físico ou ao teclado tradicional, permitindo que o usuário execute ações em um jogo ou emulador por meio de movimentos simples da mão. A implementação combina OpenCV e MediaPipe para capturar quadros, localizar landmarks da mão e classificar gestos em tempo real. O sistema também usa o módulo `pynput` para simular as teclas do teclado e possibilitar a interação com o jogo em foco. O trabalho busca validar a viabilidade do uso de gestos como entrada em um cenário de jogo local, discutindo desafios de detecção, confiabilidade e ergonomia do gesto.
 
 ### 🎯 Palavras‑chave
 
-Ex.: Anomalia, Classificação, Machine Learning, Eficiência Computacional.
+Visão computacional, OpenCV, MediaPipe, Gestos da mão, Controle de jogos, Python, Webcam, Interação humano-computador.
 
 ### 🕹️ Introdução
 
-* Contextualização e importância do estudo.
-* Problema identificado.
-* Objetivos e escopo.
+* O projeto nasce da ideia de controlar jogos sem o uso de teclado ou controle físico, usando gestos reais da mão detectados por câmera.
+* O problema central é transformar uma interação visual em comandos confiáveis para um jogo em execução no computador.
+* O objetivo é criar um protótipo funcional que reconheça gestos básicos e os converta em ações do jogo, com boa resposta em tempo real e baixa complexidade de uso.
 
 ### ⚡️ Metodologia
 
-* Descrição dos métodos e técnicas aplicadas.
-* Linguagem e Frameworks usados (Ex.: Python, Scikit‑Learn).
-* Etapas do experimento e critérios de avaliação.
+* A metodologia do projeto consiste em capturar frames da webcam, localizar a mão com MediaPipe e extrair landmarks para análise dos gestos.
+* O classificador utiliza características geométricas dos pontos da mão para diferenciar gestos distintos, como mão fechada e dedo indicador estendido.
+* A linguagem principal é Python, com bibliotecas OpenCV, MediaPipe e `pynput`.
+* A validação foi realizada por meio de imagens do dataset interno do projeto, com treinos e teste do modelo KNN, além da execução da webcam em tempo real para verificar a resposta do gesto.
 
 ### 📊 Resultados e Discussões
 
-* Apresentação dos dados obtidos (tabelas, gráficos).
-* Análises e comparações com trabalhos correlatos.
+* O projeto demonstrou que é viável detectar gestos da mão a partir de landmarks extraídos em tempo real.
+* A detecção por landmarks permitiu distinguir uma mão fechada de um gesto com o dedo indicador estendido, que pode representar ações diferentes no jogo.
+* A integração com `pynput` permitiu que os gestos fossem convertidos em eventos de teclado e enviados ao jogo em foco.
+* O modelo também mostrou a importância de ajustar limiares de confiança e de manter a detecção estável para evitar disparos errados.
 
 ### 🏁 Conclusões e Trabalhos Futuros
 
-* Resultado final e impacto esperado.
-* Limitações do estudo atual e caminhos para futuras pesquisas.
+* O protótipo alcançou a etapa inicial de reconhecimento de gestos e interação com teclado simulado, validando a proposta do projeto.
+* A solução é adequada como MVP, com base para evoluções em mapeamento de gestos, calibração mais robusta e suporte a comandos mais elaborados.
+* Como trabalhos futuros, pode-se expandir o conjunto de gestos, melhorar a precisão com mais imagens de treino, ajustar a detecção para diferentes iluminação e uso de mão, e integrar controles mais complexos ao jogo.
 
 ### 📚 Referências Bibliográficas
 
-> Listagem de artigos, livros e demais fontes citadas (ABNT, APA ou outro padrão requerido).
+> - MediaPipe Hands Documentation. Google AI.
+> - OpenCV Documentation. OpenCV.
+> - Python `pynput` Library Documentation.
+> - Requisitos do projeto e arquitetura definidos em `doc/requisitos.md` e `doc/tecnologias-arquitetura.md`.
 
 ### ⚡️ Anexos e Links
 
-* Scripts, dataset e demais arquivos de suporte (`src/` e `documents/other/`).
-* Link para vídeo de demonstração no YouTube (se aplicável).
+* Arquivos do projeto e dataset em `src/image/`.
+* Notebook de treino e protótipo em `notebook.ipynb`.
+* Documentos de requisitos e arquitetura em `doc/`.
+* Emulador e jogo de referência em `super-mario-world-usa_202406/`.
 
 ---
 
@@ -78,69 +85,72 @@ Ex.: Anomalia, Classificação, Machine Learning, Eficiência Computacional.
 
 ### 📄 Identificação
 
-* Disciplina: Ex.: Engenharia de Software, IA, Banco de Dados
+* Disciplina: Engenharia de Software / Visão Computacional
 * Professor(a): [Nome do Professor(a)](#)
 
 ### 🎯 Tema e Contextualização
 
-> Breve apresentação do tema abordado e importância para a área de estudo.
+> O tema do projeto é a criação de um sistema de controle de jogos por gestos da mão usando visão computacional. A solução combina técnicas de processamento de imagem, detecção de landmarks e simulação de teclado para tornar a interação mais natural e acessível.
 
 ### 🗺️ Especificações do Projeto
 
 * **Requisitos Funcionais e Não Funcionais**
-* **Regras de Negócio** ou escopo técnico específico para a área.
+* **Reconhecimento de gestos da mão em tempo real**
+* **Mapeamento de gesto para comando e tecla**
+* **Pré-visualização da câmera e indicação do estado do gesto**
+* **Liberação de teclas quando o gesto deixa de ser reconhecido**
+* **Uso local do processamento e armazenamento mínimo**
 
 ### ⚡️ Arquitetura e Stack Utilizado
 
-* **Linguagem de Programação:** Ex.: Java, Python, C#
-* **Framework(s):** Ex.: Spring Boot, Django, React
-* **Banco de Dados:** Ex.: PostgreSQL, MySQL
-* **Bibliotecas e Ferramentas de Suporte:** Ex.: Pandas, Scikit‑Learn, JUnit
+* **Linguagem de Programação:** Python 3
+* **Framework(s):** OpenCV, MediaPipe, `pynput`
+* **Banco de Dados:** Não aplicável no MVP (uso de arquivos de configuração e modelo local)
+* **Bibliotecas e Ferramentas de Suporte:** NumPy, `cv2`, `mediapipe`, `keyboard` via `pynput`, Jupyter Notebook
 
 ### 🛠️ Estrutura do Repositório
 
 ```python
-templatesUNIBRAS/
+vision_game/
 ├─ assets/
-│  └─ (imagens, logotipos e recursos visuais para o README e templates)
+│  └─ recursos visuais e logo do projeto
+├─ doc/
+│  ├─ requisitos.md
+│  └─ tecnologias-arquitetura.md
 ├─ document/
-│  └─ (modelos de documentos em .docx, .pdf ou .md para diferentes usos)
+│  └─ documentação complementar
 ├─ src/
-│  └─ (código fonte de exemplos, scripts de automação ou templates LaTeX, se existirem)
-├─ .gitattributes
-├─ .gitignore
-├─ LICENSE
+│  ├─ image/
+│  │  ├─ move/
+│  │  ├─ stop/
+│  │  └─ gesture_model.npz
+│  └─ readme.md
+├─ notebook.ipynb
+├─ requirements.txt
 ├─ README.md
+├─ LICENSE
+└─ super-mario-world-usa_202406/
 ```
 
 ### ⚡️ Instruções para Build e Execução
 
-Exemplo para ambiente Java + Maven:
-
 ```bash
-mvn clean install
-mvn spring-boot:run
-```
-
-Exemplo para ambiente Python:
-
-```bash
+cd vision_game
+python -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
-python app.py
+jupyter notebook
 ```
+
+Para executar o protótipo com webcam e controle de gesto, abra o notebook `notebook.ipynb` e execute as células em sequência. A última célula abre a câmera e ativa o controle por gesto.
 
 ### 📷 Evidências Visuais
 
-> Adição de capturas de tela e vídeos para demonstrar:
+> O projeto utiliza imagens de amostras da mão para treinamento do classificador e exibição da câmera em tempo real.
 
-* Resultado de operações no Banco de Dados.
-* Testes automatizados e relatório de cobertura.
-* Output e interface gráfica do sistema.
-
-Ex.:
-![Exemplo de Resultado Final](assets/screenshot.png)
-
-👉 [Assista à Demonstração do Sistema no YouTube](https://www.youtube.com/watch?v=EXEMPLO)
+* Detecção da mão via landmarks do MediaPipe.
+* Classificação de gestos via geometria das articulações.
+* Simulação de tecla para interação com o jogo.
 
 ---
 
@@ -148,17 +158,16 @@ Ex.:
 
 * Qualidade e clareza do código-fonte.
 * Adequação às normas e padrões de projeto.
-* Resultado final (usabilidade e eficiência técnica).
+* Eficiência no reconhecimento de gestos.
+* Usabilidade do protótipo e resposta em tempo real.
+* Resultado final funcional com integração ao jogo ou emulador.
 
 ---
 
 ## 📅 Histórico de Versões
 
-* **v0.5.0** - DD/MM/AAAA — Descrição técnica das mudanças implementadas.
-* **v0.4.0** - DD/MM/AAAA — Melhorias e refatorações para otimização de performance.
-* **v0.3.0** - DD/MM/AAAA — Adição de novas funcionalidades e integração de APIs.
-* **v0.2.0** - DD/MM/AAAA — Correções e ajuste de estrutura de dados.
-* **v0.1.0** - DD/MM/AAAA — Lançamento inicial e estrutura básica do projeto.
+* **v0.1.0** - 10/10/2026 — Versão inicial do projeto com protótipo de detecção de gestos e controle por webcam.
+* **v0.0.1** - 10/10/2026 — Estrutura inicial do repositório e documentação do conceito do projeto.
 
 ---
 

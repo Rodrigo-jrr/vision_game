@@ -1,0 +1,9 @@
+{
+  "camera_index": 0,
+  "min_confidence": 0.80,
+  "model_path": "src/image/gesture_model.npz",
+  "exit_key": "f12",
+  "gestures": {
+    "move": "right"
+  }
+}

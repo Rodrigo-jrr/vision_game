@@ -32,7 +32,14 @@ def test_loads_the_versioned_example_config_successfully() -> None:
     assert config.min_confidence == pytest.approx(0.80)
     assert config.model_path == Path("src/image/gesture_model.npz")
     assert config.exit_key == "f12"
-    assert config.gestures == {"move": "right"}
+    # RF-04 completo: 5 comandos ativos (esquerda/direita/cima/baixo/acao).
+    assert config.gestures == {
+        "esquerda": "left",
+        "direita": "right",
+        "cima": "up",
+        "baixo": "down",
+        "acao": "z",
+    }
 
 
 def test_loads_a_valid_config_built_from_scratch(tmp_path: Path) -> None:

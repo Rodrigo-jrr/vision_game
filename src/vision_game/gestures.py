@@ -5,14 +5,21 @@ from pathlib import Path
 
 import numpy as np
 
-# Rotulos do dataset de treino (pastas em src/image/). O nome da pasta e o
-# significado do gesto estao invertidos por historico do notebook original:
-# fotos em "move" mostram a mao fechada (acao "stop"); fotos em "stop"
-# mostram o indicador estendido (acao "move"). Mantido igual ao notebook.
-CLASSES = ("move", "stop")
+# Pastas do dataset de treino em src/image/ (nomes historicos, nao
+# renomeados). Fonte unica da verdade: pasta -> gesto semantico (RF-04).
+# "move" (mao fechada) e "stop" (dedo indicador) sao os nomes originais do
+# notebook; o significado real de cada um e dado por este mapeamento, nao
+# pelo nome da pasta.
+GESTURE_FOLDERS = ("move", "stop", "esquerda", "cima", "baixo", "acao")
 
-GESTURE_MOVE = "move"
-GESTURE_STOP = "stop"
+_FOLDER_TO_GESTURE: dict[str, str | None] = {
+    "move": None,  # mao fechada -> estado neutro, libera a tecla
+    "stop": "direita",  # dedo indicador -> comando "direita" (tecla RIGHT)
+    "esquerda": "esquerda",  # mao aberta, 5 dedos -> tecla LEFT
+    "cima": "cima",  # polegar para cima -> tecla UP
+    "baixo": "baixo",  # polegar para baixo -> tecla DOWN
+    "acao": "acao",  # sinal de paz (indicador + medio) -> tecla Z
+}
 
 _RULE_BASED_CONFIDENCE = 0.96
 
@@ -68,7 +75,7 @@ def predict_knn(
 ) -> tuple[int, float]:
     distances = np.linalg.norm(reference_features - sample, axis=1)
     nearest_indices = np.argsort(distances)[: min(k, len(reference_labels))]
-    votes = np.bincount(reference_labels[nearest_indices], minlength=len(CLASSES))
+    votes = np.bincount(reference_labels[nearest_indices], minlength=len(GESTURE_FOLDERS))
     predicted_label = int(np.argmax(votes))
     confidence = float(votes[predicted_label] / len(nearest_indices))
     return predicted_label, confidence
@@ -92,8 +99,9 @@ def _load_model(model_path: Path) -> _Model:
         class_names = tuple(str(name) for name in saved_model["classes"].tolist())
         k = int(saved_model["k"])
 
-    if "move" not in class_names or "stop" not in class_names:
-        raise ValueError("O modelo precisa conter as classes 'move' e 'stop'.")
+    missing_folders = set(GESTURE_FOLDERS) - set(class_names)
+    if missing_folders:
+        raise ValueError(f"O modelo precisa conter as classes: {sorted(missing_folders)}.")
 
     return _Model(features=features, labels=labels, class_names=class_names, k=k)
 
@@ -107,11 +115,11 @@ class GestureClassifier:
     def classify(self, hand_landmarks, min_confidence: float) -> str | None:
         rule_based_gesture = classify_hand_gesture(hand_landmarks)
         if rule_based_gesture == "mao_fechada":
-            detected_class, confidence = GESTURE_STOP, _RULE_BASED_CONFIDENCE
+            folder_name, confidence = "move", _RULE_BASED_CONFIDENCE
         elif rule_based_gesture == "indicador":
-            detected_class, confidence = GESTURE_MOVE, _RULE_BASED_CONFIDENCE
+            folder_name, confidence = "stop", _RULE_BASED_CONFIDENCE
         else:
-            detected_class, confidence = None, 0.0
+            folder_name, confidence = None, 0.0
             feature = extract_features(hand_landmarks)
             if feature is not None:
                 class_id, confidence = predict_knn(
@@ -120,10 +128,8 @@ class GestureClassifier:
                     self._model.labels,
                     k=self._model.k,
                 )
-                detected_class = (
-                    GESTURE_STOP if self._model.class_names[class_id] == "move" else GESTURE_MOVE
-                )
+                folder_name = self._model.class_names[class_id]
 
-        if detected_class is None or confidence < min_confidence:
+        if folder_name is None or confidence < min_confidence:
             return None
-        return detected_class
+        return _FOLDER_TO_GESTURE[folder_name]

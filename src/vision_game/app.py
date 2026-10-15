@@ -8,7 +8,7 @@ from pynput import keyboard as pynput_keyboard
 from vision_game.camera import Camera, CameraError
 from vision_game.config import AppConfig, ConfigError, load_config
 from vision_game.controls import ControlManager
-from vision_game.gestures import GESTURE_MOVE, GESTURE_STOP, GestureClassifier
+from vision_game.gestures import GestureClassifier
 from vision_game.hand_tracking import HandTracker
 from vision_game.keyboard import KeyboardController, resolve_special_key
 from vision_game.preview import Preview
@@ -33,11 +33,9 @@ def resolve_config_path() -> Path:
 def _status_text(hand_detected: bool, gesture: str | None) -> str:
     if not hand_detected:
         return "Sem mao detectada - tecla solta"
-    if gesture == GESTURE_MOVE:
-        return "Dedo indicador (movimento) - tecla mantida"
-    if gesture == GESTURE_STOP:
-        return "Mao fechada (parada) - tecla solta"
-    return "Gesto incerto - tecla solta"
+    if gesture is not None:
+        return f"Comando: {gesture} - tecla mantida"
+    return "Gesto neutro ou incerto - tecla solta"
 
 
 def run(config: AppConfig) -> None:
@@ -74,7 +72,7 @@ def run(config: AppConfig) -> None:
             control_manager.update(gesture)
 
             status = _status_text(hand_landmarks is not None, gesture)
-            preview.render(frame, status, active=gesture == GESTURE_MOVE)
+            preview.render(frame, status, active=gesture is not None)
 
             if preview.exit_requested():
                 break

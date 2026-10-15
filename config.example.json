@@ -4,6 +4,10 @@
   "model_path": "src/image/gesture_model.npz",
   "exit_key": "f12",
   "gestures": {
-    "move": "right"
+    "esquerda": "left",
+    "direita": "right",
+    "cima": "up",
+    "baixo": "down",
+    "acao": "z"
   }
 }

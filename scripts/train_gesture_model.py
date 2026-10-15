@@ -1,4 +1,4 @@
-"""Treina o modelo KNN de gestos a partir de src/image/move e src/image/stop."""
+"""Treina o modelo KNN de gestos a partir das pastas em GESTURE_FOLDERS (src/image/)."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ _SRC_DIR = Path(__file__).resolve().parent.parent / "src"
 if str(_SRC_DIR) not in sys.path:
     sys.path.insert(0, str(_SRC_DIR))
 
-from vision_game.gestures import CLASSES, extract_features, predict_knn
+from vision_game.gestures import GESTURE_FOLDERS, extract_features, predict_knn
 
 K_NEIGHBORS = 3
 ROOT = Path(__file__).resolve().parent.parent
@@ -34,7 +34,7 @@ def _extract_dataset() -> tuple[np.ndarray, np.ndarray]:
         max_num_hands=1,
         min_detection_confidence=0.35,
     ) as hand_detector:
-        for label_id, label in enumerate(CLASSES):
+        for label_id, label in enumerate(GESTURE_FOLDERS):
             class_dir = DATA_DIR / label
             image_files = sorted(
                 path
@@ -69,7 +69,7 @@ def _extract_dataset() -> tuple[np.ndarray, np.ndarray]:
     if not len(features_array):
         raise ValueError("Nao foi possivel extrair landmarks de nenhuma imagem.")
 
-    for label_id, label in enumerate(CLASSES):
+    for label_id, label in enumerate(GESTURE_FOLDERS):
         count = int(np.sum(labels_array == label_id))
         print(f"{label}: {count} imagens validas")
     print(f"Formato das caracteristicas: {features_array.shape}")
@@ -90,7 +90,7 @@ def _evaluate_leave_one_out(features: np.ndarray, labels: np.ndarray) -> None:
         )
         leave_one_out_predictions.append(prediction)
 
-    confusion = np.zeros((len(CLASSES), len(CLASSES)), dtype=np.int32)
+    confusion = np.zeros((len(GESTURE_FOLDERS), len(GESTURE_FOLDERS)), dtype=np.int32)
     for actual, predicted in zip(labels, leave_one_out_predictions):
         confusion[actual, predicted] += 1
 
@@ -108,7 +108,7 @@ def main() -> int:
         MODEL_PATH,
         features=features,
         labels=labels,
-        classes=np.asarray(CLASSES),
+        classes=np.asarray(GESTURE_FOLDERS),
         k=np.asarray(K_NEIGHBORS),
     )
     print(f"Modelo salvo em: {MODEL_PATH}")

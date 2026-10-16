@@ -121,28 +121,61 @@ vision_game/
 │  └─ documentação complementar
 ├─ src/
 │  ├─ image/
-│  │  ├─ move/
-│  │  ├─ stop/
+│  │  ├─ move/       # mão fechada -> estado neutro
+│  │  ├─ stop/       # indicador esticado -> direção calculada por ângulo
+│  │  ├─ acao/       # sinal de paz -> tecla de ação
+│  │  ├─ esquerda/ cima/ baixo/  # fotos coletadas, não usadas no treino atual
 │  │  └─ gesture_model.npz
-│  └─ readme.md
-├─ notebook.ipynb
+│  └─ vision_game/   # app modular: app.py, config.py, camera.py,
+│                     # hand_tracking.py, gestures.py, controls.py,
+│                     # keyboard.py, preview.py
+├─ scripts/
+│  ├─ train_gesture_model.py       # retreina o modelo a partir das fotos
+│  └─ capture_gesture_photos.py    # captura fotos novas guiado pela webcam
+├─ tests/            # pytest (gestures, controls, config)
+├─ config.example.json
+├─ notebook.ipynb     # registro do experimento original (não é mais o app)
 ├─ requirements.txt
 ├─ README.md
 ├─ LICENSE
-└─ super-mario-world-usa_202406/
+└─ super-mario-world-usa_202406/   # ROM de referência (precisa de um emulador, ex. RetroArch)
 ```
 
 ### ⚡️ Instruções para Build e Execução
 
 ```bash
 cd vision_game
-python -m venv .venv
+python3.12 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-jupyter notebook
 ```
 
-Para executar o protótipo com webcam e controle de gesto, abra o notebook `notebook.ipynb` e execute as células em sequência. A última célula abre a câmera e ativa o controle por gesto.
+Pra rodar o controlador:
+
+```bash
+PYTHONPATH=src python -m vision_game
+```
+
+Isso abre a webcam e uma janela de pré-visualização. Gestos reconhecidos hoje:
+
+* **Indicador esticado** — a direção (esquerda/direita/cima/baixo) é calculada pelo ângulo do dedo, não é preciso memorizar uma pose por direção.
+* **Mão fechada** — estado neutro, solta qualquer tecla.
+* **Sinal de paz** (indicador + médio) — comando de ação.
+
+O mapeamento de teclas fica em `config.example.json` (copie para `config.json` pra personalizar — esse arquivo é ignorado pelo git). Pra sair, aperte **F12** ou **q** com a janela da webcam selecionada.
+
+No macOS, é necessário conceder permissão de **Câmera** e de **Acessibilidade** (Ajustes do Sistema → Privacidade e Segurança) ao binário Python que roda o app — sem a de Acessibilidade, as teclas simuladas não chegam a nenhuma outra janela.
+
+Pra testar com um jogo de verdade, abra a ROM em `super-mario-world-usa_202406/` num emulador de SNES (ex. [RetroArch](https://www.retroarch.com/), core Snes9x) e deixe a janela do emulador em foco enquanto o controlador estiver rodando.
+
+**Coletar mais fotos de treino** (se quiser adicionar gestos novos ou mais variedade):
+```bash
+python scripts/capture_gesture_photos.py <nome_da_pose>
+```
+Depois, retreine com:
+```bash
+python scripts/train_gesture_model.py
+```
 
 ### 📷 Evidências Visuais
 

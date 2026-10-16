@@ -227,12 +227,17 @@ class TestGestureClassifierFolderMapping:
 
 class TestDirectionFromAngle:
     """`_direction_from_angle` seteriza 360 graus em 4 setores de 90 graus
-    (direita=0, cima=90, esquerda=180, baixo=270) via `round(angulo/90) % 4`.
+    (esquerda=0, cima=90, direita=180, baixo=270) via `round(angulo/90) % 4`.
+
+    Rotulos de 0/180 (esquerda/direita) invertidos em relacao ao calculo
+    geometrico puro: `_DIRECTION_BY_SECTOR` corrige o espelhamento da camera
+    de frente (sem `cv2.flip`), ver `/tmp/backend-mirror-fix-summary.md`.
+    Cima/baixo (setores 1/3) nao foram afetados por essa correcao.
     """
 
     @pytest.mark.parametrize(
         ("angle_degrees", "expected_direction"),
-        [(0, "direita"), (90, "cima"), (180, "esquerda"), (270, "baixo")],
+        [(0, "esquerda"), (90, "cima"), (180, "direita"), (270, "baixo")],
     )
     def test_cardinal_angles(self, angle_degrees: float, expected_direction: str) -> None:
         assert _direction_from_angle(angle_degrees) == expected_direction
@@ -243,20 +248,22 @@ class TestDirectionFromAngle:
             # Nos 4 pontos exatos de fronteira entre setores, `round()` usa o
             # desempate "banker's rounding" do Python (arredonda para o
             # inteiro PAR mais proximo): 45/90=0.5 -> round=0 (par) ->
-            # "direita"; 135/90=1.5 -> round=2 (par) -> "esquerda";
-            # 225/90=2.5 -> round=2 (par) -> "esquerda" (nao "baixo", apesar
-            # de 225 estar exatamente entre "esquerda" e "baixo");
-            # 315/90=3.5 -> round=4%4=0 -> "direita" (nao "baixo").
+            # "esquerda"; 135/90=1.5 -> round=2 (par) -> "direita";
+            # 225/90=2.5 -> round=2 (par) -> "direita" (nao "baixo", apesar
+            # de 225 estar exatamente entre "direita" e "baixo");
+            # 315/90=3.5 -> round=4%4=0 -> "esquerda" (nao "baixo").
             # Resultado pratico: nas 4 fronteiras exatas, o desempate so pode
-            # cair em "direita" ou "esquerda" -- nunca em "cima"/"baixo",
+            # cair em "esquerda" ou "direita" -- nunca em "cima"/"baixo",
             # porque os setores 0 e 2 sao pares e 1/3 sao impares. Isso bate
             # com o que o Back End descreveu como "desempate arbitrario, nao
-            # critico" (resumo RF-04/angulo), mas documento aqui o resultado
-            # exato para o caso de alguem depender dele no futuro.
-            (45, "direita"),
-            (135, "esquerda"),
-            (225, "esquerda"),
-            (315, "direita"),
+            # critico" (resumo RF-04/angulo); os rotulos de "esquerda"/
+            # "direita" abaixo foram invertidos apos o fix de espelhamento da
+            # camera (`_DIRECTION_BY_SECTOR`), mas o setor (0 ou 2) que cada
+            # angulo cai continua o mesmo de antes.
+            (45, "esquerda"),
+            (135, "direita"),
+            (225, "direita"),
+            (315, "esquerda"),
         ],
     )
     def test_exact_sector_boundaries_use_bankers_rounding(
@@ -280,8 +287,12 @@ class TestPointingDirection:
     """
 
     def test_pointing_right(self) -> None:
+        # Vetor geometrico aponta para +X (angulo 0), mas o rotulo final e
+        # "esquerda": `_DIRECTION_BY_SECTOR` corrige o espelhamento da
+        # camera de frente (sem `cv2.flip` em `camera.py`), ver
+        # /tmp/backend-mirror-fix-summary.md.
         hand = _landmarks_pointing(base=(0.0, 0.0), tip=(1.0, 0.0))
-        assert _pointing_direction(hand) == "direita"
+        assert _pointing_direction(hand) == "esquerda"
 
     def test_pointing_up(self) -> None:
         # Y menor na ponta que na base == "para cima" nas coordenadas do
@@ -290,9 +301,64 @@ class TestPointingDirection:
         assert _pointing_direction(hand) == "cima"
 
     def test_pointing_left(self) -> None:
+        # Vetor geometrico aponta para -X (angulo 180), mas o rotulo final e
+        # "direita" pelo mesmo motivo de `test_pointing_right` (correcao de
+        # espelhamento da camera, nao um erro de sinal no teste).
         hand = _landmarks_pointing(base=(0.0, 0.0), tip=(-1.0, 0.0))
-        assert _pointing_direction(hand) == "esquerda"
+        assert _pointing_direction(hand) == "direita"
 
     def test_pointing_down(self) -> None:
         hand = _landmarks_pointing(base=(0.0, 0.0), tip=(0.0, 1.0))
         assert _pointing_direction(hand) == "baixo"
+
+
+class TestMirrorHorizontalFlag:
+    """`mirror_horizontal` compensa cameras que entregam o frame ja
+    espelhado (campo de configuracao, default False). Deve inverter so o
+    eixo horizontal (esquerda/direita), nunca o vertical (cima/baixo), e sem
+    alterar o comportamento default quando omitido/False.
+    """
+
+    def test_mirror_horizontal_true_inverts_right_reading(self) -> None:
+        hand = _landmarks_pointing(base=(0.0, 0.0), tip=(1.0, 0.0))
+
+        assert _pointing_direction(hand, mirror_horizontal=True) == "direita"
+
+    def test_mirror_horizontal_true_inverts_left_reading(self) -> None:
+        hand = _landmarks_pointing(base=(0.0, 0.0), tip=(-1.0, 0.0))
+
+        assert _pointing_direction(hand, mirror_horizontal=True) == "esquerda"
+
+    def test_mirror_horizontal_true_does_not_affect_vertical_readings(self) -> None:
+        up_hand = _landmarks_pointing(base=(0.0, 0.0), tip=(0.0, -1.0))
+        down_hand = _landmarks_pointing(base=(0.0, 0.0), tip=(0.0, 1.0))
+
+        assert _pointing_direction(up_hand, mirror_horizontal=True) == "cima"
+        assert _pointing_direction(down_hand, mirror_horizontal=True) == "baixo"
+
+    def test_mirror_horizontal_false_keeps_default_behavior(self) -> None:
+        hand = _landmarks_pointing(base=(0.0, 0.0), tip=(1.0, 0.0))
+
+        assert (
+            _pointing_direction(hand, mirror_horizontal=False)
+            == _pointing_direction(hand)
+            == "esquerda"
+        )
+
+    def test_classify_of_stop_pose_respects_mirror_horizontal_flag_end_to_end(
+        self, tmp_path: Path
+    ) -> None:
+        # Mesma mao sintetica do indicador apontando para a direita (angulo
+        # 0), classificada via `GestureClassifier.classify` de ponta a
+        # ponta: sem a flag, "esquerda" (default); com a flag, "direita".
+        model_path, _ = _build_synthetic_model(tmp_path)
+        classifier = GestureClassifier(model_path)
+        hand = _build_hand({4: 0.03, 12: 0.03, 16: 0.03, 20: 0.03})
+        hand.landmark[5] = _Point(x=0.0, y=0.0, z=0.0)
+        hand.landmark[8] = _Point(x=0.35, y=0.0, z=0.0)
+        assert classify_hand_gesture(hand) == "indicador"
+
+        assert classifier.classify(hand, min_confidence=0.5) == "esquerda"
+        assert (
+            classifier.classify(hand, min_confidence=0.5, mirror_horizontal=True) == "direita"
+        )

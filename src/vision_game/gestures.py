@@ -28,7 +28,15 @@ _FOLDER_TO_GESTURE: dict[str, str | None] = {
 # Setores de 90 graus, centrados em 0/90/180/270, cobrindo os 360 graus sem
 # zona morta. `_direction_from_angle` usa `round(angulo / 90) % 4` para achar
 # o setor mais proximo; esta tupla da o gesto de cada setor, na mesma ordem.
-_DIRECTION_BY_SECTOR = ("direita", "cima", "esquerda", "baixo")
+#
+# "direita" e "esquerda" trocados de posicao (setor 0 -> esquerda, setor 2 ->
+# direita) porque `camera.py` nao espelha o frame da webcam (sem cv2.flip).
+# Numa camera de frente para o usuario sem espelhamento, a imagem crua e
+# como se as duas pessoas estivessem de frente uma pra outra: a direita
+# fisica do usuario cai do lado esquerdo da imagem (eixo X maior), e
+# vice-versa. So o eixo horizontal e afetado -- cima/baixo (setores 1 e 3)
+# ficam sem alteracao.
+_DIRECTION_BY_SECTOR = ("esquerda", "cima", "direita", "baixo")
 
 _RULE_BASED_CONFIDENCE = 0.96
 
@@ -81,7 +89,7 @@ def _direction_from_angle(angle_degrees: float) -> str:
     return _DIRECTION_BY_SECTOR[sector]
 
 
-def _pointing_direction(hand_landmarks) -> str:
+def _pointing_direction(hand_landmarks, *, mirror_horizontal: bool = False) -> str:
     """Direcao (esquerda/cima/baixo/direita) para onde o indicador apontado.
 
     Usa o vetor da base do indicador (landmark 5) para a ponta (landmark 8),
@@ -91,10 +99,19 @@ def _pointing_direction(hand_landmarks) -> str:
     O eixo Y das coordenadas do MediaPipe cresce para baixo na imagem, por
     isso o angulo inverte o sinal de Y antes do `atan2`, para que 90 graus
     corresponda a "cima" de verdade.
+
+    `mirror_horizontal` (campo de configuracao, default False = comportamento
+    ja testado e funcionando com a webcam atual, que nao vem pre-espelhada)
+    compensa trocar de camera por uma que entregue o frame ja espelhado (ex.:
+    algumas cameras de celular via Continuity Camera). Quando True, inverte
+    a leitura do eixo horizontal (delta_x) antes do calculo do angulo, sem
+    duplicar a tabela `_DIRECTION_BY_SECTOR`.
     """
     base = hand_landmarks.landmark[5]
     tip = hand_landmarks.landmark[8]
     delta_x = tip.x - base.x
+    if mirror_horizontal:
+        delta_x = -delta_x
     delta_y = tip.y - base.y
     angle_degrees = math.degrees(math.atan2(-delta_y, delta_x)) % 360.0
     return _direction_from_angle(angle_degrees)
@@ -145,7 +162,9 @@ class GestureClassifier:
     def __init__(self, model_path: Path) -> None:
         self._model = _load_model(Path(model_path))
 
-    def classify(self, hand_landmarks, min_confidence: float) -> str | None:
+    def classify(
+        self, hand_landmarks, min_confidence: float, *, mirror_horizontal: bool = False
+    ) -> str | None:
         rule_based_gesture = classify_hand_gesture(hand_landmarks)
         if rule_based_gesture == "mao_fechada":
             folder_name, confidence = "move", _RULE_BASED_CONFIDENCE
@@ -166,5 +185,5 @@ class GestureClassifier:
         if folder_name is None or confidence < min_confidence:
             return None
         if folder_name == "stop":
-            return _pointing_direction(hand_landmarks)
+            return _pointing_direction(hand_landmarks, mirror_horizontal=mirror_horizontal)
         return _FOLDER_TO_GESTURE[folder_name]

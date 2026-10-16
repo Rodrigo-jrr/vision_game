@@ -22,6 +22,7 @@ class AppConfig:
     min_confidence: float
     model_path: Path
     exit_key: str
+    mirror_horizontal: bool
     gestures: dict[str, str]
 
 
@@ -69,6 +70,10 @@ def load_config(path: str | Path) -> AppConfig:
     except KeyboardError as error:
         raise ConfigError("exit_key", str(error)) from error
 
+    mirror_horizontal = _require(data, "mirror_horizontal")
+    if not isinstance(mirror_horizontal, bool):
+        raise ConfigError("mirror_horizontal", "deve ser um booleano (true ou false)")
+
     gestures = _require(data, "gestures")
     if not isinstance(gestures, dict) or not gestures:
         raise ConfigError("gestures", "deve ser um objeto com ao menos um gesto mapeado")
@@ -87,5 +92,6 @@ def load_config(path: str | Path) -> AppConfig:
         min_confidence=min_confidence,
         model_path=Path(model_path_raw),
         exit_key=exit_key,
+        mirror_horizontal=mirror_horizontal,
         gestures=dict(gestures),
     )

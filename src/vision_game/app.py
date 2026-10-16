@@ -67,7 +67,11 @@ def run(config: AppConfig) -> None:
             gesture = None
             if hand_landmarks is not None:
                 hand_tracker.draw_landmarks(frame, hand_landmarks)
-                gesture = gesture_classifier.classify(hand_landmarks, config.min_confidence)
+                gesture = gesture_classifier.classify(
+                    hand_landmarks,
+                    config.min_confidence,
+                    mirror_horizontal=config.mirror_horizontal,
+                )
 
             control_manager.update(gesture)
 

@@ -15,6 +15,7 @@ VALID_CONFIG = {
     "min_confidence": 0.80,
     "model_path": "src/image/gesture_model.npz",
     "exit_key": "f12",
+    "mirror_horizontal": False,
     "gestures": {"move": "right"},
 }
 

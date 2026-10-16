@@ -164,6 +164,8 @@ Isso abre a webcam e uma janela de pré-visualização. Gestos reconhecidos hoje
 
 O mapeamento de teclas fica em `config.example.json` (copie para `config.json` pra personalizar — esse arquivo é ignorado pelo git). Pra sair, aperte **F12** ou **q** com a janela da webcam selecionada.
 
+Se trocar de câmera (ex.: usar o iPhone via Continuity Camera) e a direção esquerda/direita vier invertida ao apontar, mude `"mirror_horizontal"` para `true` nesse arquivo — não há detecção automática, é um ajuste manual por câmera.
+
 No macOS, é necessário conceder permissão de **Câmera** e de **Acessibilidade** (Ajustes do Sistema → Privacidade e Segurança) ao binário Python que roda o app — sem a de Acessibilidade, as teclas simuladas não chegam a nenhuma outra janela.
 
 Pra testar com um jogo de verdade, abra a ROM em `super-mario-world-usa_202406/` num emulador de SNES (ex. [RetroArch](https://www.retroarch.com/), core Snes9x) e deixe a janela do emulador em foco enquanto o controlador estiver rodando.

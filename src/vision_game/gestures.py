@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -10,16 +11,24 @@ import numpy as np
 # "move" (mao fechada) e "stop" (dedo indicador) sao os nomes originais do
 # notebook; o significado real de cada um e dado por este mapeamento, nao
 # pelo nome da pasta.
-GESTURE_FOLDERS = ("move", "stop", "esquerda", "cima", "baixo", "acao")
+#
+# As 4 direcoes (esquerda/cima/baixo/direita) nao sao mais 4 poses fixas
+# treinadas (as pastas esquerda/, cima/, baixo/ continuam no disco mas nao
+# entram mais no treino): a pose "stop" (indicador esticado) e unica, e a
+# direcao e calculada pelo angulo do dedo apontando (ver `_pointing_direction`).
+GESTURE_FOLDERS = ("move", "stop", "acao")
 
+# "stop" nao aparece aqui de proposito: seu gesto final nao e fixo, depende
+# do angulo calculado por `_pointing_direction` (ver `GestureClassifier.classify`).
 _FOLDER_TO_GESTURE: dict[str, str | None] = {
     "move": None,  # mao fechada -> estado neutro, libera a tecla
-    "stop": "direita",  # dedo indicador -> comando "direita" (tecla RIGHT)
-    "esquerda": "esquerda",  # mao aberta, 5 dedos -> tecla LEFT
-    "cima": "cima",  # polegar para cima -> tecla UP
-    "baixo": "baixo",  # polegar para baixo -> tecla DOWN
     "acao": "acao",  # sinal de paz (indicador + medio) -> tecla Z
 }
+
+# Setores de 90 graus, centrados em 0/90/180/270, cobrindo os 360 graus sem
+# zona morta. `_direction_from_angle` usa `round(angulo / 90) % 4` para achar
+# o setor mais proximo; esta tupla da o gesto de cada setor, na mesma ordem.
+_DIRECTION_BY_SECTOR = ("direita", "cima", "esquerda", "baixo")
 
 _RULE_BASED_CONFIDENCE = 0.96
 
@@ -65,6 +74,30 @@ def extract_features(hand_landmarks) -> np.ndarray | None:
     points -= wrist
     points /= palm_scale
     return np.concatenate((points.reshape(-1), wrist[:2], [palm_scale])).astype(np.float32)
+
+
+def _direction_from_angle(angle_degrees: float) -> str:
+    sector = round(angle_degrees / 90.0) % len(_DIRECTION_BY_SECTOR)
+    return _DIRECTION_BY_SECTOR[sector]
+
+
+def _pointing_direction(hand_landmarks) -> str:
+    """Direcao (esquerda/cima/baixo/direita) para onde o indicador apontado.
+
+    Usa o vetor da base do indicador (landmark 5) para a ponta (landmark 8),
+    em vez do pulso (landmark 0): isola a direcao do dedo em si, sem o ruido
+    da rotacao do pulso/antebraco em relacao a camera.
+
+    O eixo Y das coordenadas do MediaPipe cresce para baixo na imagem, por
+    isso o angulo inverte o sinal de Y antes do `atan2`, para que 90 graus
+    corresponda a "cima" de verdade.
+    """
+    base = hand_landmarks.landmark[5]
+    tip = hand_landmarks.landmark[8]
+    delta_x = tip.x - base.x
+    delta_y = tip.y - base.y
+    angle_degrees = math.degrees(math.atan2(-delta_y, delta_x)) % 360.0
+    return _direction_from_angle(angle_degrees)
 
 
 def predict_knn(
@@ -132,4 +165,6 @@ class GestureClassifier:
 
         if folder_name is None or confidence < min_confidence:
             return None
+        if folder_name == "stop":
+            return _pointing_direction(hand_landmarks)
         return _FOLDER_TO_GESTURE[folder_name]

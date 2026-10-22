@@ -1,4 +1,4 @@
-#!/Users/francismaralvesmartinsjunior/vision_game/.venv/bin/python3.10
+#!/Users/rodrigorezende/dev/Vision_Game/.venv/bin/python3.12
 import sys
 from pip._internal.cli.main import main
 if __name__ == '__main__':
